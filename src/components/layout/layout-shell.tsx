@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
+import { NotificationBanner } from "@/components/layout/notification-banner";
 
 interface LayoutShellProps {
   children: React.ReactNode;
@@ -27,6 +28,7 @@ export function LayoutShell({ children }: LayoutShellProps) {
         <Header onMenuClick={handleMenuClick} />
 
         <main className="flex-1 overflow-y-auto bg-accent/30 p-4 lg:p-6">
+          <NotificationBanner />
           {children}
         </main>
       </div>

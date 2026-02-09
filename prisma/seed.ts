@@ -123,9 +123,9 @@ async function main() {
     { assignmentKey: "Đạo đức", dayOfWeek: 5, startTime: "10:10", endTime: "10:55", teacherName: "Cô Hương", location: "Phòng 3A" },
   ];
 
-  let scheduleCount = 0;
+  const createdSchedules: { id: string; dayOfWeek: number; startTime: string; subjectName: string }[] = [];
   for (const s of scheduleData) {
-    await prisma.schedule.create({
+    const schedule = await prisma.schedule.create({
       data: {
         subjectAssignmentId: assignmentMap[s.assignmentKey],
         dayOfWeek: s.dayOfWeek,
@@ -139,7 +139,62 @@ async function main() {
         isActive: true,
       },
     });
-    scheduleCount++;
+    createdSchedules.push({
+      id: schedule.id,
+      dayOfWeek: s.dayOfWeek,
+      startTime: s.startTime,
+      subjectName: s.assignmentKey,
+    });
+  }
+
+  // Create reminders for all schedules (15 minutes before)
+  let reminderCount = 0;
+  for (const sch of createdSchedules) {
+    await prisma.reminder.create({
+      data: {
+        scheduleId: sch.id,
+        minutesBefore: 15,
+        isEnabled: true,
+      },
+    });
+    reminderCount++;
+  }
+
+  // Create some sample progress records for last week
+  const today = new Date();
+  const lastMonday = new Date(today);
+  lastMonday.setDate(today.getDate() - ((today.getDay() + 6) % 7) - 7);
+
+  let progressCount = 0;
+  const statuses = ["completed", "completed", "completed", "in_progress", "missed"];
+  const ratings = [5, 4, 4, 3, null];
+  const sampleNotes = [
+    "Bé hoàn thành tốt bài tập",
+    "Đọc diễn cảm tốt, cần luyện thêm viết",
+    "Hoàn thành bài kiểm tra 9/10",
+    "Đang làm bài tập về nhà",
+    "Nghỉ ốm",
+  ];
+
+  for (let dayOffset = 0; dayOffset < 5; dayOffset++) {
+    const progressDate = new Date(lastMonday);
+    progressDate.setDate(lastMonday.getDate() + dayOffset);
+    const dayOfWeek = dayOffset + 1; // 1=T2, 2=T3, ...
+
+    const daySchedules = createdSchedules.filter((s) => s.dayOfWeek === dayOfWeek);
+    for (let i = 0; i < daySchedules.length; i++) {
+      const statusIdx = (dayOffset + i) % statuses.length;
+      await prisma.progress.create({
+        data: {
+          scheduleId: daySchedules[i].id,
+          date: progressDate,
+          status: statuses[statusIdx],
+          rating: ratings[statusIdx],
+          notes: sampleNotes[statusIdx],
+        },
+      });
+      progressCount++;
+    }
   }
 
   console.log("Seed data created successfully!");
@@ -147,7 +202,9 @@ async function main() {
   console.log(`- 1 class (3A)`);
   console.log(`- ${subjects.length} subjects`);
   console.log(`- ${subjects.length} subject assignments for Anvy`);
-  console.log(`- ${scheduleCount} schedule entries (T2-T6 timetable)`);
+  console.log(`- ${createdSchedules.length} schedule entries (T2-T6 timetable)`);
+  console.log(`- ${reminderCount} reminders`);
+  console.log(`- ${progressCount} progress records (last week)`);
 }
 
 main()

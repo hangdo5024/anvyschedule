@@ -6,6 +6,7 @@ import { Select, SelectOption } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { TodayScheduleList, type TodaySchedule } from "@/components/dashboard/today-schedule";
 import { WeekOverview } from "@/components/dashboard/week-overview";
+import { useReminders } from "@/hooks/use-reminders";
 
 type Student = {
   id: string;
@@ -88,6 +89,9 @@ export function DashboardView({ students }: DashboardViewProps) {
   );
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Check for upcoming reminders and send browser notifications
+  useReminders(selectedStudentId || null);
 
   const fetchDashboard = useCallback(async (studentId: string) => {
     if (!studentId) return;
