@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { DeleteClassButton } from "@/components/classes/delete-class-button";
-import { Plus, Pencil, School } from "lucide-react";
+import { Plus, Pencil, Copy, School } from "lucide-react";
 
 export default async function ClassesPage() {
   const classes = await prisma.class.findMany({
@@ -111,7 +111,12 @@ export default async function ClassesPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Link href={`/classes/${cls.id}/edit`}>
+                        <Link href={`/classes/new?copyFrom=${cls.id}`} title="Sao chép">
+                          <Button variant="outline" size="sm">
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                        <Link href={`/classes/${cls.id}/edit`} title="Chỉnh sửa">
                           <Button variant="outline" size="sm">
                             <Pencil className="h-4 w-4" />
                           </Button>

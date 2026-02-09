@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DeleteSubjectButton } from "@/components/subjects/delete-subject-button";
-import { Plus, Pencil, BookOpen } from "lucide-react";
+import { Plus, Pencil, Copy, BookOpen } from "lucide-react";
 
 export default async function SubjectsPage() {
   const subjects = await prisma.subject.findMany({
@@ -64,7 +64,12 @@ export default async function SubjectsPage() {
                     <CardTitle className="text-lg">{subject.name}</CardTitle>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Link href={`/subjects/${subject.id}/edit`}>
+                    <Link href={`/subjects/new?copyFrom=${subject.id}`} title="Sao chép">
+                      <Button variant="ghost" size="sm">
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                    <Link href={`/subjects/${subject.id}/edit`} title="Chỉnh sửa">
                       <Button variant="ghost" size="sm">
                         <Pencil className="h-4 w-4" />
                       </Button>

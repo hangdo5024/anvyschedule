@@ -13,7 +13,7 @@ import { Loader2 } from "lucide-react";
 
 interface ClassFormProps {
   initialData?: {
-    id: string;
+    id?: string;
     name: string;
     gradeLevel: number;
     academicYear: string;
@@ -37,7 +37,7 @@ export function ClassForm({ initialData }: ClassFormProps) {
     initialData?.description ?? ""
   );
 
-  const isEditing = !!initialData;
+  const isEditing = !!initialData?.id;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -53,7 +53,7 @@ export function ClassForm({ initialData }: ClassFormProps) {
       };
 
       const url = isEditing
-        ? `/api/classes/${initialData.id}`
+        ? `/api/classes/${initialData!.id}`
         : "/api/classes";
       const method = isEditing ? "PUT" : "POST";
 

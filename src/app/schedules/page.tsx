@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, Pencil, Calendar } from "lucide-react";
+import { Plus, Pencil, Copy, Calendar } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -113,7 +113,12 @@ export default async function SchedulesPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Link href={`/schedules/${schedule.id}/edit`}>
+                      <Link href={`/schedules/new?copyFrom=${schedule.id}`} title="Sao chép">
+                        <Button variant="outline" size="sm">
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                      <Link href={`/schedules/${schedule.id}/edit`} title="Chỉnh sửa">
                         <Button variant="outline" size="sm">
                           <Pencil className="h-4 w-4" />
                         </Button>

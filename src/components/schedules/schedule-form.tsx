@@ -14,7 +14,7 @@ import { DAYS_OF_WEEK } from "@/lib/constants";
 
 interface ScheduleFormProps {
   initialData?: {
-    id: string;
+    id?: string;
     subjectAssignmentId: string;
     dayOfWeek: number;
     startTime: string;
@@ -57,7 +57,7 @@ export function ScheduleForm({ initialData, assignments }: ScheduleFormProps) {
   );
   const [notes, setNotes] = useState(initialData?.notes ?? "");
 
-  const isEditing = !!initialData;
+  const isEditing = !!initialData?.id;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -99,7 +99,7 @@ export function ScheduleForm({ initialData, assignments }: ScheduleFormProps) {
       };
 
       const url = isEditing
-        ? `/api/schedules/${initialData.id}`
+        ? `/api/schedules/${initialData!.id}`
         : "/api/schedules";
       const method = isEditing ? "PUT" : "POST";
 

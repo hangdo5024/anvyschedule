@@ -13,7 +13,7 @@ import { GENDERS } from "@/lib/constants";
 
 interface StudentFormProps {
   initialData?: {
-    id: string;
+    id?: string;
     fullName: string;
     dateOfBirth: string | null;
     gender: string | null;
@@ -34,7 +34,7 @@ export function StudentForm({ initialData }: StudentFormProps) {
   const [parentPhone, setParentPhone] = useState(initialData?.parentPhone ?? "");
   const [notes, setNotes] = useState(initialData?.notes ?? "");
 
-  const isEditing = !!initialData;
+  const isEditing = !!initialData?.id;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -57,7 +57,7 @@ export function StudentForm({ initialData }: StudentFormProps) {
       };
 
       const url = isEditing
-        ? `/api/students/${initialData.id}`
+        ? `/api/students/${initialData!.id}`
         : "/api/students";
       const method = isEditing ? "PUT" : "POST";
 

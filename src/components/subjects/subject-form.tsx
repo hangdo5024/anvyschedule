@@ -11,7 +11,7 @@ import { Loader2, Check } from "lucide-react";
 
 interface SubjectFormProps {
   initialData?: {
-    id: string;
+    id?: string;
     name: string;
     description: string | null;
     color: string;
@@ -21,7 +21,7 @@ interface SubjectFormProps {
 
 export function SubjectForm({ initialData }: SubjectFormProps) {
   const router = useRouter();
-  const isEditing = !!initialData;
+  const isEditing = !!initialData?.id;
 
   const [name, setName] = useState(initialData?.name ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
@@ -42,7 +42,7 @@ export function SubjectForm({ initialData }: SubjectFormProps) {
 
     try {
       const url = isEditing
-        ? `/api/subjects/${initialData.id}`
+        ? `/api/subjects/${initialData!.id}`
         : "/api/subjects";
       const method = isEditing ? "PUT" : "POST";
 
