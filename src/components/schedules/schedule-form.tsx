@@ -115,6 +115,7 @@ export function ScheduleForm({ initialData, assignments }: ScheduleFormProps) {
       }
 
       router.push("/schedules");
+      router.refresh();
     } catch (error) {
       alert(
         error instanceof Error

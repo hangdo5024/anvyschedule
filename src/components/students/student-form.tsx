@@ -73,6 +73,7 @@ export function StudentForm({ initialData }: StudentFormProps) {
       }
 
       router.push("/students");
+      router.refresh();
     } catch (error) {
       alert(
         error instanceof Error
