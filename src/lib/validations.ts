@@ -14,6 +14,8 @@ export const classSchema = z.object({
   gradeLevel: z.coerce.number().min(1).max(5),
   academicYear: z.string().min(1, "Năm học là bắt buộc"),
   description: z.string().nullish(),
+  ageMin: z.coerce.number().min(0).nullish(),
+  ageMax: z.coerce.number().min(0).nullish(),
 });
 
 export const subjectSchema = z.object({
@@ -21,6 +23,9 @@ export const subjectSchema = z.object({
   description: z.string().nullish(),
   color: z.string().default("#3B82F6"),
   icon: z.string().nullish(),
+  level: z.coerce.number().min(1).max(5).default(1),
+  ageMin: z.coerce.number().min(0).nullish(),
+  ageMax: z.coerce.number().min(0).nullish(),
 });
 
 export const assignmentSchema = z.object({

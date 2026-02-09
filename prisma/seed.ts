@@ -43,6 +43,8 @@ async function main() {
       gradeLevel: 3,
       academicYear: "2025-2026",
       description: "Lớp 3A - Cô Hoa chủ nhiệm",
+      ageMin: 8,
+      ageMax: 9,
     },
   });
 
@@ -57,15 +59,15 @@ async function main() {
   // Create subjects
   const [toan, tiengViet, tiengAnh, tnxh, myThuat, amNhac, theDuc, tinHoc, daoDuc] =
     await Promise.all([
-      prisma.subject.create({ data: { name: "Toán", color: "#3B82F6", description: "Toán học" } }),
-      prisma.subject.create({ data: { name: "Tiếng Việt", color: "#EF4444", description: "Tiếng Việt" } }),
-      prisma.subject.create({ data: { name: "Tiếng Anh", color: "#8B5CF6", description: "Tiếng Anh" } }),
-      prisma.subject.create({ data: { name: "Tự nhiên & Xã hội", color: "#10B981", description: "TNXH" } }),
-      prisma.subject.create({ data: { name: "Mỹ Thuật", color: "#F97316", description: "Mỹ thuật" } }),
-      prisma.subject.create({ data: { name: "Âm nhạc", color: "#EC4899", description: "Âm nhạc" } }),
-      prisma.subject.create({ data: { name: "Thể dục", color: "#EAB308", description: "Thể dục" } }),
-      prisma.subject.create({ data: { name: "Tin học", color: "#6B7280", description: "Tin học" } }),
-      prisma.subject.create({ data: { name: "Đạo đức", color: "#92400E", description: "Đạo đức" } }),
+      prisma.subject.create({ data: { name: "Toán", color: "#3B82F6", description: "Toán học", level: 2, ageMin: 6, ageMax: 11 } }),
+      prisma.subject.create({ data: { name: "Tiếng Việt", color: "#EF4444", description: "Tiếng Việt", level: 2, ageMin: 6, ageMax: 11 } }),
+      prisma.subject.create({ data: { name: "Tiếng Anh", color: "#8B5CF6", description: "Tiếng Anh", level: 3, ageMin: 7, ageMax: 11 } }),
+      prisma.subject.create({ data: { name: "Tự nhiên & Xã hội", color: "#10B981", description: "TNXH", level: 1, ageMin: 6, ageMax: 9 } }),
+      prisma.subject.create({ data: { name: "Mỹ Thuật", color: "#F97316", description: "Mỹ thuật", level: 1, ageMin: 6, ageMax: 11 } }),
+      prisma.subject.create({ data: { name: "Âm nhạc", color: "#EC4899", description: "Âm nhạc", level: 1, ageMin: 6, ageMax: 11 } }),
+      prisma.subject.create({ data: { name: "Thể dục", color: "#EAB308", description: "Thể dục", level: 1, ageMin: 6, ageMax: 11 } }),
+      prisma.subject.create({ data: { name: "Tin học", color: "#6B7280", description: "Tin học", level: 2, ageMin: 8, ageMax: 11 } }),
+      prisma.subject.create({ data: { name: "Đạo đức", color: "#92400E", description: "Đạo đức", level: 1, ageMin: 6, ageMax: 11 } }),
     ]);
 
   const subjects = [toan, tiengViet, tiengAnh, tnxh, myThuat, amNhac, theDuc, tinHoc, daoDuc];

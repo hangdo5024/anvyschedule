@@ -32,6 +32,8 @@ export default async function EditClassPage({ params }: EditClassPageProps) {
           gradeLevel: classData.gradeLevel,
           academicYear: classData.academicYear,
           description: classData.description,
+          ageMin: classData.ageMin,
+          ageMax: classData.ageMax,
         }}
       />
     </div>

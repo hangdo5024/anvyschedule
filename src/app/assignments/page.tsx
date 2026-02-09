@@ -22,15 +22,15 @@ export default async function AssignmentsPage() {
   const [students, classes, subjects, assignments] = await Promise.all([
     prisma.student.findMany({
       orderBy: { fullName: "asc" },
-      select: { id: true, fullName: true },
+      select: { id: true, fullName: true, dateOfBirth: true },
     }),
     prisma.class.findMany({
       orderBy: { name: "asc" },
-      select: { id: true, name: true, gradeLevel: true },
+      select: { id: true, name: true, gradeLevel: true, ageMin: true, ageMax: true },
     }),
     prisma.subject.findMany({
       orderBy: { name: "asc" },
-      select: { id: true, name: true, color: true },
+      select: { id: true, name: true, color: true, level: true, ageMin: true, ageMax: true },
     }),
     prisma.subjectAssignment.findMany({
       orderBy: { createdAt: "desc" },

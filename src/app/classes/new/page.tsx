@@ -17,6 +17,8 @@ export default async function NewClassPage({ searchParams }: NewClassPageProps) 
         gradeLevel: source.gradeLevel,
         academicYear: source.academicYear,
         description: source.description,
+        ageMin: source.ageMin,
+        ageMax: source.ageMax,
       };
     }
   }

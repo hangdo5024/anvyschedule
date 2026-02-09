@@ -18,6 +18,8 @@ interface ClassFormProps {
     gradeLevel: number;
     academicYear: string;
     description: string | null;
+    ageMin: number | null;
+    ageMax: number | null;
   };
 }
 
@@ -36,6 +38,12 @@ export function ClassForm({ initialData }: ClassFormProps) {
   const [description, setDescription] = useState(
     initialData?.description ?? ""
   );
+  const [ageMin, setAgeMin] = useState(
+    initialData?.ageMin?.toString() ?? ""
+  );
+  const [ageMax, setAgeMax] = useState(
+    initialData?.ageMax?.toString() ?? ""
+  );
 
   const isEditing = !!initialData?.id;
 
@@ -50,6 +58,8 @@ export function ClassForm({ initialData }: ClassFormProps) {
         gradeLevel: parseInt(gradeLevel, 10),
         academicYear,
         description: description || undefined,
+        ageMin: ageMin ? parseInt(ageMin, 10) : null,
+        ageMax: ageMax ? parseInt(ageMax, 10) : null,
       };
 
       const url = isEditing
@@ -129,6 +139,33 @@ export function ClassForm({ initialData }: ClassFormProps) {
                 placeholder="Ví dụ: 2025-2026"
                 required
               />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="ageMin">Tuổi tối thiểu</Label>
+                <Input
+                  id="ageMin"
+                  type="number"
+                  min={0}
+                  max={18}
+                  value={ageMin}
+                  onChange={(e) => setAgeMin(e.target.value)}
+                  placeholder="VD: 6"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ageMax">Tuổi tối đa</Label>
+                <Input
+                  id="ageMax"
+                  type="number"
+                  min={0}
+                  max={18}
+                  value={ageMax}
+                  onChange={(e) => setAgeMax(e.target.value)}
+                  placeholder="VD: 7"
+                />
+              </div>
             </div>
 
             <div className="space-y-2">

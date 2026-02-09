@@ -29,6 +29,8 @@ model Class {
   gradeLevel   Int
   academicYear String
   description  String?
+  ageMin       Int?
+  ageMax       Int?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -54,6 +56,9 @@ model Subject {
   description String?
   color       String   @default("#3B82F6")
   icon        String?
+  level       Int      @default(1)
+  ageMin      Int?
+  ageMax      Int?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

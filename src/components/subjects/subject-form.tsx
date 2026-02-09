@@ -6,8 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectOption } from "@/components/ui/select";
 import { SUBJECT_COLORS } from "@/lib/constants";
 import { Loader2, Check } from "lucide-react";
+
+const LEVELS = [
+  { value: 1, label: "Dễ" },
+  { value: 2, label: "Trung bình" },
+  { value: 3, label: "Khó" },
+  { value: 4, label: "Nâng cao" },
+  { value: 5, label: "Chuyên sâu" },
+];
 
 interface SubjectFormProps {
   initialData?: {
@@ -16,6 +25,9 @@ interface SubjectFormProps {
     description: string | null;
     color: string;
     icon: string | null;
+    level: number;
+    ageMin: number | null;
+    ageMax: number | null;
   };
 }
 
@@ -26,6 +38,9 @@ export function SubjectForm({ initialData }: SubjectFormProps) {
   const [name, setName] = useState(initialData?.name ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
   const [color, setColor] = useState(initialData?.color ?? SUBJECT_COLORS[0].value);
+  const [level, setLevel] = useState(initialData?.level?.toString() ?? "1");
+  const [ageMin, setAgeMin] = useState(initialData?.ageMin?.toString() ?? "");
+  const [ageMax, setAgeMax] = useState(initialData?.ageMax?.toString() ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -53,6 +68,9 @@ export function SubjectForm({ initialData }: SubjectFormProps) {
           name: name.trim(),
           description: description.trim() || undefined,
           color,
+          level: parseInt(level, 10),
+          ageMin: ageMin ? parseInt(ageMin, 10) : null,
+          ageMax: ageMax ? parseInt(ageMax, 10) : null,
         }),
       });
 
@@ -98,6 +116,48 @@ export function SubjectForm({ initialData }: SubjectFormProps) {
           placeholder="Mô tả ngắn về môn học (không bắt buộc)"
           rows={3}
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="level">Độ khó</Label>
+        <Select
+          id="level"
+          value={level}
+          onChange={(e) => setLevel(e.target.value)}
+        >
+          {LEVELS.map((l) => (
+            <SelectOption key={l.value} value={l.value.toString()}>
+              {l.label}
+            </SelectOption>
+          ))}
+        </Select>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="ageMin">Tuổi tối thiểu</Label>
+          <Input
+            id="ageMin"
+            type="number"
+            min={0}
+            max={18}
+            value={ageMin}
+            onChange={(e) => setAgeMin(e.target.value)}
+            placeholder="VD: 6"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="ageMax">Tuổi tối đa</Label>
+          <Input
+            id="ageMax"
+            type="number"
+            min={0}
+            max={18}
+            value={ageMax}
+            onChange={(e) => setAgeMax(e.target.value)}
+            placeholder="VD: 11"
+          />
+        </div>
       </div>
 
       <div className="space-y-2">

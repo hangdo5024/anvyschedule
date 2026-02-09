@@ -27,6 +27,9 @@ export default async function EditSubjectPage({ params }: EditSubjectPageProps) 
           description: subject.description,
           color: subject.color,
           icon: subject.icon,
+          level: subject.level,
+          ageMin: subject.ageMin,
+          ageMax: subject.ageMax,
         }}
       />
     </div>

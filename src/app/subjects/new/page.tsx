@@ -17,6 +17,9 @@ export default async function NewSubjectPage({ searchParams }: NewSubjectPagePro
         description: source.description,
         color: source.color,
         icon: source.icon,
+        level: source.level,
+        ageMin: source.ageMin,
+        ageMax: source.ageMax,
       };
     }
   }
