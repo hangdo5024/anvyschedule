@@ -1,11 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Calendar, CheckCircle, Clock, XCircle } from "lucide-react";
+import { Calendar, CheckCircle, Clock, XCircle, CalendarRange } from "lucide-react";
 import { Select, SelectOption } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { TodayScheduleList, type TodaySchedule } from "@/components/dashboard/today-schedule";
 import { WeekOverview } from "@/components/dashboard/week-overview";
+import { MonthOverview } from "@/components/dashboard/month-overview";
 import { useReminders } from "@/hooks/use-reminders";
 
 type Student = {
@@ -89,6 +91,7 @@ export function DashboardView({ students }: DashboardViewProps) {
   );
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [overviewMode, setOverviewMode] = useState<"week" | "month">("week");
 
   // Check for upcoming reminders and send browser notifications
   useReminders(selectedStudentId || null);
@@ -180,7 +183,7 @@ export function DashboardView({ students }: DashboardViewProps) {
             ))}
           </div>
 
-          {/* Main content: today schedule + week overview */}
+          {/* Main content: today schedule + overview */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <TodayScheduleList
@@ -188,8 +191,35 @@ export function DashboardView({ students }: DashboardViewProps) {
                 date={dashboardData.date}
               />
             </div>
-            <div>
-              <WeekOverview weekData={dashboardData.week} />
+            <div className="space-y-3">
+              {/* Overview toggle */}
+              <div className="flex items-center gap-1">
+                <Button
+                  variant={overviewMode === "week" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setOverviewMode("week")}
+                >
+                  <CalendarRange className="h-4 w-4 mr-1.5" />
+                  Tuần
+                </Button>
+                <Button
+                  variant={overviewMode === "month" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setOverviewMode("month")}
+                >
+                  <Calendar className="h-4 w-4 mr-1.5" />
+                  Tháng
+                </Button>
+              </div>
+
+              {overviewMode === "week" ? (
+                <WeekOverview weekData={dashboardData.week} />
+              ) : (
+                <MonthOverview
+                  studentId={selectedStudentId}
+                  currentDate={new Date()}
+                />
+              )}
             </div>
           </div>
         </>

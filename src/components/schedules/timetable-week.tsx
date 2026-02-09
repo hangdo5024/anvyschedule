@@ -25,13 +25,13 @@ const STATUS_ICONS: Record<string, string> = {
 function getStatusLabel(status: string): string {
   switch (status) {
     case "completed":
-      return "Ho\u00E0n th\u00E0nh";
+      return "Hoàn thành";
     case "in_progress":
-      return "\u0110ang h\u1ECDc";
+      return "Đang học";
     case "pending":
-      return "Ch\u1EDD";
+      return "Chờ";
     case "missed":
-      return "B\u1ECF l\u1EE1";
+      return "Bỏ lỡ";
     default:
       return status;
   }
@@ -51,16 +51,10 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
 export function TimetableWeek({ data, currentDate }: TimetableWeekProps) {
   const weekStartDate = startOfWeek(currentDate, { weekStartsOn: 1 });
 
-  // Determine which days to show (1=Mon to 6=Sat; include 0=Sun only if entries exist)
-  const hasSundayEntries =
-    data.days["0"] && data.days["0"].length > 0;
+  // Always show all 7 days: Mon-Sun
   const displayDays = useMemo(() => {
-    const days: number[] = [1, 2, 3, 4, 5, 6]; // Mon-Sat
-    if (hasSundayEntries) {
-      days.push(0); // Add Sunday at end
-    }
-    return days;
-  }, [hasSundayEntries]);
+    return [1, 2, 3, 4, 5, 6, 0]; // Mon-Sat + Sun
+  }, []);
 
   // Collect all unique time slots and sort them
   const timeSlots = useMemo(() => {
@@ -112,7 +106,7 @@ export function TimetableWeek({ data, currentDate }: TimetableWeekProps) {
       <Card>
         <CardContent className="py-16 text-center">
           <p className="text-muted-foreground">
-            Kh\u00F4ng c\u00F3 l\u1ECBch h\u1ECDc trong tu\u1EA7n n\u00E0y.
+            Không có lịch học trong tuần này.
           </p>
         </CardContent>
       </Card>
@@ -130,7 +124,7 @@ export function TimetableWeek({ data, currentDate }: TimetableWeekProps) {
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="px-3 py-3 text-left text-sm font-semibold text-muted-foreground w-[120px] border-r">
-                      Gi\u1EDD
+                      Giờ
                     </th>
                     {displayDays.map((day) => {
                       const dayDate = getDayDate(day);
@@ -319,7 +313,7 @@ export function TimetableWeek({ data, currentDate }: TimetableWeekProps) {
                         variant="default"
                         className="ml-2 text-[10px] px-1.5 py-0"
                       >
-                        H\u00F4m nay
+                        Hôm nay
                       </Badge>
                     )}
                   </span>
@@ -390,7 +384,7 @@ export function TimetableWeek({ data, currentDate }: TimetableWeekProps) {
           <Card>
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">
-                Kh\u00F4ng c\u00F3 l\u1ECBch h\u1ECDc trong tu\u1EA7n n\u00E0y.
+                Không có lịch học trong tuần này.
               </p>
             </CardContent>
           </Card>

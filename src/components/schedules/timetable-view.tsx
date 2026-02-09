@@ -9,6 +9,8 @@ import {
   subWeeks,
   addDays,
   subDays,
+  addMonths,
+  subMonths,
 } from "date-fns";
 import { vi } from "date-fns/locale";
 import {
@@ -25,6 +27,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { TimetableWeek } from "./timetable-week";
 import { TimetableDay } from "./timetable-day";
+import { TimetableMonth } from "./timetable-month";
 
 export interface TimetableScheduleItem {
   id: string;
@@ -76,10 +79,12 @@ function formatDateRange(weekStartDate: Date): string {
   return `${startStr} - ${endStr}`;
 }
 
+type ViewMode = "week" | "day" | "month";
+
 export function TimetableView({ students, classes }: TimetableViewProps) {
   const [selectedStudentId, setSelectedStudentId] = useState("");
   const [selectedClassId, setSelectedClassId] = useState("");
-  const [viewMode, setViewMode] = useState<"week" | "day">("week");
+  const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [timetableData, setTimetableData] =
     useState<TimetableResponse | null>(null);
@@ -127,20 +132,16 @@ export function TimetableView({ students, classes }: TimetableViewProps) {
     fetchTimetable();
   }, [fetchTimetable]);
 
-  function prevWeek() {
-    setCurrentDate((prev) => subWeeks(prev, 1));
+  function prevPeriod() {
+    if (viewMode === "week") setCurrentDate((prev) => subWeeks(prev, 1));
+    else if (viewMode === "day") setCurrentDate((prev) => subDays(prev, 1));
+    else setCurrentDate((prev) => subMonths(prev, 1));
   }
 
-  function nextWeek() {
-    setCurrentDate((prev) => addWeeks(prev, 1));
-  }
-
-  function prevDay() {
-    setCurrentDate((prev) => subDays(prev, 1));
-  }
-
-  function nextDay() {
-    setCurrentDate((prev) => addDays(prev, 1));
+  function nextPeriod() {
+    if (viewMode === "week") setCurrentDate((prev) => addWeeks(prev, 1));
+    else if (viewMode === "day") setCurrentDate((prev) => addDays(prev, 1));
+    else setCurrentDate((prev) => addMonths(prev, 1));
   }
 
   function goToToday() {
@@ -148,6 +149,28 @@ export function TimetableView({ students, classes }: TimetableViewProps) {
   }
 
   const weekStartDate = startOfWeek(currentDate, { weekStartsOn: 1 });
+
+  function getDateLabel() {
+    if (viewMode === "week") {
+      return `Tuần: ${formatDateRange(weekStartDate)}`;
+    } else if (viewMode === "day") {
+      return format(currentDate, "EEEE, dd/MM/yyyy", { locale: vi });
+    } else {
+      return format(currentDate, "MMMM yyyy", { locale: vi });
+    }
+  }
+
+  function getPrevTitle() {
+    if (viewMode === "week") return "Tuần trước";
+    if (viewMode === "day") return "Ngày trước";
+    return "Tháng trước";
+  }
+
+  function getNextTitle() {
+    if (viewMode === "week") return "Tuần sau";
+    if (viewMode === "day") return "Ngày sau";
+    return "Tháng sau";
+  }
 
   return (
     <div className="space-y-4">
@@ -196,6 +219,15 @@ export function TimetableView({ students, classes }: TimetableViewProps) {
             {/* View Mode Toggle */}
             <div className="flex items-center gap-1">
               <Button
+                variant={viewMode === "month" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setViewMode("month")}
+                title="Xem theo tháng"
+              >
+                <Calendar className="h-4 w-4 mr-1.5" />
+                Tháng
+              </Button>
+              <Button
                 variant={viewMode === "week" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("week")}
@@ -220,8 +252,8 @@ export function TimetableView({ students, classes }: TimetableViewProps) {
               <Button
                 variant="outline"
                 size="icon"
-                onClick={viewMode === "week" ? prevWeek : prevDay}
-                title={viewMode === "week" ? "Tuần trước" : "Ngày trước"}
+                onClick={prevPeriod}
+                title={getPrevTitle()}
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -237,24 +269,16 @@ export function TimetableView({ students, classes }: TimetableViewProps) {
               <Button
                 variant="outline"
                 size="icon"
-                onClick={viewMode === "week" ? nextWeek : nextDay}
-                title={viewMode === "week" ? "Tuần sau" : "Ngày sau"}
+                onClick={nextPeriod}
+                title={getNextTitle()}
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
 
             {/* Date Display */}
-            <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
-              {viewMode === "week" ? (
-                <span>
-                  Tuần: {formatDateRange(weekStartDate)}
-                </span>
-              ) : (
-                <span>
-                  {format(currentDate, "EEEE, dd/MM/yyyy", { locale: vi })}
-                </span>
-              )}
+            <div className="text-sm font-medium text-muted-foreground whitespace-nowrap capitalize">
+              {getDateLabel()}
             </div>
           </div>
         </CardContent>
@@ -297,8 +321,10 @@ export function TimetableView({ students, classes }: TimetableViewProps) {
       ) : timetableData ? (
         viewMode === "week" ? (
           <TimetableWeek data={timetableData} currentDate={currentDate} />
-        ) : (
+        ) : viewMode === "day" ? (
           <TimetableDay data={timetableData} currentDate={currentDate} />
+        ) : (
+          <TimetableMonth data={timetableData} currentDate={currentDate} />
         )
       ) : null}
     </div>
