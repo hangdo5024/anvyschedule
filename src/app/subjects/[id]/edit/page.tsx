@@ -9,9 +9,13 @@ interface EditSubjectPageProps {
 export default async function EditSubjectPage({ params }: EditSubjectPageProps) {
   const { id } = await params;
 
-  const subject = await prisma.subject.findUnique({
-    where: { id },
-  });
+  const [subject, groups] = await Promise.all([
+    prisma.subject.findUnique({ where: { id } }),
+    prisma.subjectGroup.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true, color: true },
+    }),
+  ]);
 
   if (!subject) {
     notFound();
@@ -30,7 +34,9 @@ export default async function EditSubjectPage({ params }: EditSubjectPageProps) 
           level: subject.level,
           ageMin: subject.ageMin,
           ageMax: subject.ageMax,
+          subjectGroupId: subject.subjectGroupId,
         }}
+        groups={groups}
       />
     </div>
   );

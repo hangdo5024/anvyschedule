@@ -37,7 +37,13 @@ export default async function AssignmentsPage() {
       include: {
         student: true,
         class: true,
-        subject: true,
+        subject: {
+          include: {
+            subjectGroup: {
+              select: { id: true, name: true, color: true },
+            },
+          },
+        },
         _count: {
           select: { schedules: true },
         },
@@ -83,6 +89,7 @@ export default async function AssignmentsPage() {
                   <TableHead>Học sinh</TableHead>
                   <TableHead>Lớp</TableHead>
                   <TableHead>Môn học</TableHead>
+                  <TableHead>Nhóm môn</TableHead>
                   <TableHead>Số lịch học</TableHead>
                   <TableHead className="w-[70px]"></TableHead>
                 </TableRow>
@@ -103,6 +110,22 @@ export default async function AssignmentsPage() {
                       >
                         {assignment.subject.name}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {assignment.subject.subjectGroup ? (
+                        <Badge
+                          variant="outline"
+                          className="text-xs"
+                          style={{
+                            borderColor: assignment.subject.subjectGroup.color,
+                            color: assignment.subject.subjectGroup.color,
+                          }}
+                        >
+                          {assignment.subject.subjectGroup.name}
+                        </Badge>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">—</span>
+                      )}
                     </TableCell>
                     <TableCell>{assignment._count.schedules}</TableCell>
                     <TableCell>

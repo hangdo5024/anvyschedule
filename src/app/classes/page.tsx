@@ -83,6 +83,7 @@ export default async function ClassesPage() {
                   <TableHead>Tên lớp</TableHead>
                   <TableHead>Khối</TableHead>
                   <TableHead>Năm học</TableHead>
+                  <TableHead>Độ tuổi</TableHead>
                   <TableHead>Số học sinh</TableHead>
                   <TableHead>Mô tả</TableHead>
                   <TableHead className="text-right">Thao tác</TableHead>
@@ -105,6 +106,15 @@ export default async function ClassesPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>{cls.academicYear}</TableCell>
+                    <TableCell>
+                      {cls.ageMin !== null || cls.ageMax !== null ? (
+                        <span className="text-sm">
+                          {cls.ageMin ?? "?"} - {cls.ageMax ?? "?"} tuổi
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">—</span>
+                      )}
+                    </TableCell>
                     <TableCell>{cls.students.length}</TableCell>
                     <TableCell className="max-w-[200px] truncate">
                       {cls.description || "—"}

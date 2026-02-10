@@ -50,19 +50,31 @@ model StudentClass {
   @@unique([studentId, classId])
 }
 
-model Subject {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  color       String   @default("#3B82F6")
-  icon        String?
-  level       Int      @default(1)
-  ageMin      Int?
-  ageMax      Int?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model SubjectGroup {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  color     String   @default("#3B82F6")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  assignments SubjectAssignment[]
+  subjects Subject[]
+}
+
+model Subject {
+  id             String   @id @default(cuid())
+  name           String
+  description    String?
+  color          String   @default("#3B82F6")
+  icon           String?
+  level          Int      @default(1)
+  ageMin         Int?
+  ageMax         Int?
+  subjectGroupId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  subjectGroup SubjectGroup? @relation(fields: [subjectGroupId], references: [id], onDelete: SetNull)
+  assignments  SubjectAssignment[]
 }
 
 model SubjectAssignment {

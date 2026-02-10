@@ -8,6 +8,11 @@ interface NewSubjectPageProps {
 export default async function NewSubjectPage({ searchParams }: NewSubjectPageProps) {
   const { copyFrom } = await searchParams;
 
+  const groups = await prisma.subjectGroup.findMany({
+    orderBy: { name: "asc" },
+    select: { id: true, name: true, color: true },
+  });
+
   let initialData;
   if (copyFrom) {
     const source = await prisma.subject.findUnique({ where: { id: copyFrom } });
@@ -20,6 +25,7 @@ export default async function NewSubjectPage({ searchParams }: NewSubjectPagePro
         level: source.level,
         ageMin: source.ageMin,
         ageMax: source.ageMax,
+        subjectGroupId: source.subjectGroupId,
       };
     }
   }
@@ -29,7 +35,7 @@ export default async function NewSubjectPage({ searchParams }: NewSubjectPagePro
       <h1 className="text-2xl font-bold mb-6">
         {copyFrom ? "Sao chép môn học" : "Thêm môn học mới"}
       </h1>
-      <SubjectForm initialData={initialData} />
+      <SubjectForm initialData={initialData} groups={groups} />
     </div>
   );
 }

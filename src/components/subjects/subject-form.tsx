@@ -18,6 +18,12 @@ const LEVELS = [
   { value: 5, label: "Chuyên sâu" },
 ];
 
+interface SubjectGroup {
+  id: string;
+  name: string;
+  color: string;
+}
+
 interface SubjectFormProps {
   initialData?: {
     id?: string;
@@ -28,10 +34,12 @@ interface SubjectFormProps {
     level: number;
     ageMin: number | null;
     ageMax: number | null;
+    subjectGroupId: string | null;
   };
+  groups: SubjectGroup[];
 }
 
-export function SubjectForm({ initialData }: SubjectFormProps) {
+export function SubjectForm({ initialData, groups }: SubjectFormProps) {
   const router = useRouter();
   const isEditing = !!initialData?.id;
 
@@ -41,8 +49,19 @@ export function SubjectForm({ initialData }: SubjectFormProps) {
   const [level, setLevel] = useState(initialData?.level?.toString() ?? "1");
   const [ageMin, setAgeMin] = useState(initialData?.ageMin?.toString() ?? "");
   const [ageMax, setAgeMax] = useState(initialData?.ageMax?.toString() ?? "");
+  const [subjectGroupId, setSubjectGroupId] = useState(initialData?.subjectGroupId ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  function handleGroupChange(groupId: string) {
+    setSubjectGroupId(groupId);
+    if (groupId) {
+      const group = groups.find((g) => g.id === groupId);
+      if (group) {
+        setColor(group.color);
+      }
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -71,6 +90,7 @@ export function SubjectForm({ initialData }: SubjectFormProps) {
           level: parseInt(level, 10),
           ageMin: ageMin ? parseInt(ageMin, 10) : null,
           ageMax: ageMax ? parseInt(ageMax, 10) : null,
+          subjectGroupId: subjectGroupId || null,
         }),
       });
 
@@ -105,6 +125,27 @@ export function SubjectForm({ initialData }: SubjectFormProps) {
           placeholder="VD: Toán, Tiếng Việt, Tiếng Anh..."
           required
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="subjectGroupId">Nhóm môn học</Label>
+        <Select
+          id="subjectGroupId"
+          value={subjectGroupId}
+          onChange={(e) => handleGroupChange(e.target.value)}
+        >
+          <SelectOption value="">-- Không thuộc nhóm --</SelectOption>
+          {groups.map((g) => (
+            <SelectOption key={g.id} value={g.id}>
+              {g.name}
+            </SelectOption>
+          ))}
+        </Select>
+        {subjectGroupId && (
+          <p className="text-xs text-muted-foreground">
+            Màu sắc sẽ theo màu của nhóm môn học
+          </p>
+        )}
       </div>
 
       <div className="space-y-2">
