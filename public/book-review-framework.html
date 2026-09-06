@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Review Framework — Grades 1–5</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #dbeafe;
+      --g1: #16a34a;
+      --g1-bg: #f0fdf4;
+      --g1-border: #bbf7d0;
+      --g3: #ea580c;
+      --g3-bg: #fff7ed;
+      --g3-border: #fed7aa;
+      --g4: #9333ea;
+      --g4-bg: #faf5ff;
+      --g4-border: #e9d5ff;
+      --g5: #dc2626;
+      --g5-bg: #fef2f2;
+      --g5-border: #fecaca;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-800);
+      line-height: 1.6;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      color: white;
+      text-align: center;
+      padding: 48px 24px;
+    }
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    /* Tab Navigation */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+      border-bottom: 2px solid var(--gray-200);
+      padding-bottom: 0;
+    }
+    .tab-btn {
+      padding: 12px 24px;
+      border: none;
+      background: transparent;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+      border-radius: 8px 8px 0 0;
+      color: var(--gray-600);
+    }
+    .tab-btn:hover { background: var(--gray-100); }
+    .tab-btn.active-g1 { border-bottom-color: var(--g1); color: var(--g1); background: var(--g1-bg); }
+    .tab-btn.active-g3 { border-bottom-color: var(--g3); color: var(--g3); background: var(--g3-bg); }
+    .tab-btn.active-g4 { border-bottom-color: var(--g4); color: var(--g4); background: var(--g4-bg); }
+    .tab-btn.active-g5 { border-bottom-color: var(--g5); color: var(--g5); background: var(--g5-bg); }
+    .tab-btn.active-compare { border-bottom-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Grade Section */
+    .grade-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: white;
+    }
+    .badge-g1 { background: var(--g1); }
+    .badge-g3 { background: var(--g3); }
+    .badge-g4 { background: var(--g4); }
+    .badge-g5 { background: var(--g5); }
+
+    /* Table */
+    .review-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 32px;
+      font-size: 0.95rem;
+    }
+    .review-table thead th {
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: white;
+    }
+    .th-g1 { background: var(--g1); }
+    .th-g3 { background: var(--g3); }
+    .th-g4 { background: var(--g4); }
+    .th-g5 { background: var(--g5); }
+    .th-compare { background: var(--primary); }
+
+    .review-table tbody tr { background: white; }
+    .review-table tbody tr:nth-child(even) { background: var(--gray-50); }
+    .review-table tbody tr:hover { background: var(--primary-light); }
+
+    .review-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-200);
+      vertical-align: top;
+    }
+    .review-table td:first-child {
+      font-weight: 600;
+      white-space: nowrap;
+      color: var(--gray-900);
+    }
+
+    .prompt-text {
+      color: var(--gray-700);
+      font-style: italic;
+    }
+    .question-list {
+      list-style: none;
+      padding: 0;
+    }
+    .question-list li {
+      position: relative;
+      padding-left: 18px;
+      margin-bottom: 4px;
+      color: var(--gray-700);
+    }
+    .question-list li::before {
+      content: "?";
+      position: absolute;
+      left: 0;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .response-tag {
+      display: inline-block;
+      background: var(--gray-100);
+      border: 1px solid var(--gray-200);
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      color: var(--gray-600);
+      font-weight: 500;
+    }
+
+    /* Compare table */
+    .compare-table td:first-child {
+      font-weight: 700;
+    }
+
+    /* Footer */
+    .footer-note {
+      text-align: center;
+      margin-top: 40px;
+      padding: 24px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      color: var(--gray-600);
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+    .footer-note strong { color: var(--gray-800); }
+
+    /* Print */
+    @media print {
+      .tabs { display: none; }
+      .tab-panel { display: block !important; page-break-after: always; }
+      .header { padding: 24px; }
+      body { background: white; }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header h1 { font-size: 1.5rem; }
+      .review-table { font-size: 0.85rem; }
+      .review-table td, .review-table th { padding: 10px 10px; }
+      .tab-btn { padding: 10px 14px; font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>&#128218; Book Review Framework</h1>
+  <p>A Progressive Guide for Elementary Students — Grades 1 through 5</p>
+</div>
+
+<div class="container">
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active-g1" onclick="showTab('g12', this, 'active-g1')">Grade 1–2</button>
+    <button class="tab-btn" onclick="showTab('g3', this, 'active-g3')">Grade 3</button>
+    <button class="tab-btn" onclick="showTab('g4', this, 'active-g4')">Grade 4</button>
+    <button class="tab-btn" onclick="showTab('g5', this, 'active-g5')">Grade 5</button>
+    <button class="tab-btn" onclick="showTab('compare', this, 'active-compare')">Comparison</button>
+  </div>
+
+  <!-- GRADE 1–2 -->
+  <div id="g12" class="tab-panel active">
+    <div class="grade-title"><span class="grade-badge badge-g1">Beginner</span> Grade 1–2</div>
+    <table class="review-table">
+      <thead><tr>
+        <th class="th-g1" style="width:14%">Section</th>
+        <th class="th-g1" style="width:22%">Prompt</th>
+        <th class="th-g1" style="width:40%">Guiding Questions</th>
+        <th class="th-g1" style="width:14%">Response</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>Title &amp; Author</td>
+          <td class="prompt-text">"The book is called ___. It was written by ___."</td>
+          <td><ul class="question-list">
+            <li>What is the name of the book?</li>
+            <li>Who wrote it?</li>
+            <li>Who drew the pictures?</li>
+          </ul></td>
+          <td><span class="response-tag">1 sentence</span></td>
+        </tr>
+        <tr>
+          <td>Characters</td>
+          <td class="prompt-text">"The main character is ___."</td>
+          <td><ul class="question-list">
+            <li>Who is the story about?</li>
+            <li>Is it a person, an animal, or something else?</li>
+          </ul></td>
+          <td><span class="response-tag">1 sentence</span></td>
+        </tr>
+        <tr>
+          <td>What Happened?</td>
+          <td class="prompt-text">"The story is about ___."</td>
+          <td><ul class="question-list">
+            <li>What did the character do?</li>
+            <li>What happened first?</li>
+            <li>What happened at the end?</li>
+          </ul></td>
+          <td><span class="response-tag">1–2 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Favorite Part</td>
+          <td class="prompt-text">"My favorite part is when ___."</td>
+          <td><ul class="question-list">
+            <li>What part made you laugh?</li>
+            <li>What part made you feel happy or sad?</li>
+            <li>What picture did you like most?</li>
+          </ul></td>
+          <td><span class="response-tag">1 sentence</span></td>
+        </tr>
+        <tr>
+          <td>Rating</td>
+          <td class="prompt-text">Draw 1–5 stars</td>
+          <td><ul class="question-list">
+            <li>Did you love it (5 stars) or not like it (1 star)?</li>
+            <li>Would you read it again?</li>
+          </ul></td>
+          <td><span class="response-tag">Stars only</span></td>
+        </tr>
+        <tr>
+          <td>Recommendation</td>
+          <td class="prompt-text">"I think my friend would / would not like this book because ___."</td>
+          <td><ul class="question-list">
+            <li>Who would enjoy this book?</li>
+            <li>Would your best friend like it?</li>
+            <li>Why or why not?</li>
+          </ul></td>
+          <td><span class="response-tag">1 sentence</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GRADE 3 -->
+  <div id="g3" class="tab-panel">
+    <div class="grade-title"><span class="grade-badge badge-g3">Intermediate</span> Grade 3</div>
+    <table class="review-table">
+      <thead><tr>
+        <th class="th-g3" style="width:14%">Section</th>
+        <th class="th-g3" style="width:22%">Prompt</th>
+        <th class="th-g3" style="width:40%">Guiding Questions</th>
+        <th class="th-g3" style="width:14%">Response</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>Title, Author &amp; Genre</td>
+          <td class="prompt-text">Title, author, fiction / nonfiction</td>
+          <td><ul class="question-list">
+            <li>Is this a real story or a made-up story?</li>
+            <li>Is it funny, scary, or adventurous?</li>
+          </ul></td>
+          <td><span class="response-tag">1–2 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Setting</td>
+          <td class="prompt-text">"The story takes place in ___."</td>
+          <td><ul class="question-list">
+            <li>Where does the story happen?</li>
+            <li>When does it happen — long ago, now, or in the future?</li>
+            <li>Does the setting change?</li>
+          </ul></td>
+          <td><span class="response-tag">1 sentence</span></td>
+        </tr>
+        <tr>
+          <td>Characters</td>
+          <td class="prompt-text">Describe the main character</td>
+          <td><ul class="question-list">
+            <li>What does the character look like?</li>
+            <li>How does the character act?</li>
+            <li>Is the character kind, brave, shy, or funny?</li>
+          </ul></td>
+          <td><span class="response-tag">2–3 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Summary (B-M-E)</td>
+          <td class="prompt-text">Beginning / Middle / End</td>
+          <td><ul class="question-list">
+            <li>What happened at the start?</li>
+            <li>What big event happened in the middle?</li>
+            <li>How did the story end?</li>
+          </ul></td>
+          <td><span class="response-tag">3–4 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Problem &amp; Solution</td>
+          <td class="prompt-text">"The problem is ___. It was solved by ___."</td>
+          <td><ul class="question-list">
+            <li>What trouble did the character face?</li>
+            <li>How did they try to fix it?</li>
+            <li>Did someone help them?</li>
+            <li>Did the solution work?</li>
+          </ul></td>
+          <td><span class="response-tag">2 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Opinion</td>
+          <td class="prompt-text">"I liked / didn't like this book because ___."</td>
+          <td><ul class="question-list">
+            <li>What made this book good or boring?</li>
+            <li>Was it easy or hard to read?</li>
+            <li>Did anything surprise you?</li>
+          </ul></td>
+          <td><span class="response-tag">2 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Rating</td>
+          <td class="prompt-text">1–5 stars with one reason</td>
+          <td><ul class="question-list">
+            <li>How does this compare to other books you've read?</li>
+            <li>What is one reason for your rating?</li>
+          </ul></td>
+          <td><span class="response-tag">1 sentence + stars</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GRADE 4 -->
+  <div id="g4" class="tab-panel">
+    <div class="grade-title"><span class="grade-badge badge-g4">Upper Intermediate</span> Grade 4</div>
+    <table class="review-table">
+      <thead><tr>
+        <th class="th-g4" style="width:14%">Section</th>
+        <th class="th-g4" style="width:22%">Prompt</th>
+        <th class="th-g4" style="width:40%">Guiding Questions</th>
+        <th class="th-g4" style="width:14%">Response</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>Introduction</td>
+          <td class="prompt-text">Title, author, genre, and a hook sentence</td>
+          <td><ul class="question-list">
+            <li>What type of book is this?</li>
+            <li>What makes it interesting enough to review?</li>
+            <li>Can you start with a question or exciting fact?</li>
+          </ul></td>
+          <td><span class="response-tag">2–3 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Setting &amp; Mood</td>
+          <td class="prompt-text">Where/when + how it makes the reader feel</td>
+          <td><ul class="question-list">
+            <li>Does the setting feel safe, scary, magical, or realistic?</li>
+            <li>How does the author describe it?</li>
+            <li>Does the setting change the mood of the story?</li>
+          </ul></td>
+          <td><span class="response-tag">2 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Characters</td>
+          <td class="prompt-text">Main &amp; supporting characters, traits, growth</td>
+          <td><ul class="question-list">
+            <li>Who are the most important characters?</li>
+            <li>How do they change from the beginning to the end?</li>
+            <li>What challenges shape them?</li>
+            <li>Who helps or blocks the main character?</li>
+          </ul></td>
+          <td><span class="response-tag">3–4 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Plot Summary</td>
+          <td class="prompt-text">Beginning, conflict, climax, resolution</td>
+          <td><ul class="question-list">
+            <li>What starts the action?</li>
+            <li>What is the biggest conflict?</li>
+            <li>What is the turning point?</li>
+            <li>How is the conflict resolved? (Don't give away the ending!)</li>
+          </ul></td>
+          <td><span class="response-tag">4–5 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Theme / Lesson</td>
+          <td class="prompt-text">"The author's message is ___."</td>
+          <td><ul class="question-list">
+            <li>What lesson does the character learn?</li>
+            <li>What is the author trying to teach readers?</li>
+            <li>Can you state the message in one sentence?</li>
+          </ul></td>
+          <td><span class="response-tag">1–2 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Personal Response</td>
+          <td class="prompt-text">Connect to own life or another book</td>
+          <td><ul class="question-list">
+            <li>Have you ever felt like the main character?</li>
+            <li>Does this remind you of another book or a real experience?</li>
+            <li>How did the book change how you think about something?</li>
+          </ul></td>
+          <td><span class="response-tag">2–3 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Recommendation</td>
+          <td class="prompt-text">Who should read it and why</td>
+          <td><ul class="question-list">
+            <li>What age group would enjoy this?</li>
+            <li>Would someone who likes adventure / humor / mystery enjoy this?</li>
+          </ul></td>
+          <td><span class="response-tag">2 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Rating</td>
+          <td class="prompt-text">1–5 stars with supporting reasons</td>
+          <td><ul class="question-list">
+            <li>What did the author do well?</li>
+            <li>What could be better?</li>
+            <li>Is your rating about the story, the writing, or both?</li>
+          </ul></td>
+          <td><span class="response-tag">1–2 sentences</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GRADE 5 -->
+  <div id="g5" class="tab-panel">
+    <div class="grade-title"><span class="grade-badge badge-g5">Advanced</span> Grade 5</div>
+    <table class="review-table">
+      <thead><tr>
+        <th class="th-g5" style="width:14%">Section</th>
+        <th class="th-g5" style="width:22%">Prompt</th>
+        <th class="th-g5" style="width:40%">Guiding Questions</th>
+        <th class="th-g5" style="width:14%">Response</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>Introduction</td>
+          <td class="prompt-text">Title, author, genre, thesis statement</td>
+          <td><ul class="question-list">
+            <li>What is your overall opinion in one clear sentence (thesis)?</li>
+            <li>What background does the reader need?</li>
+            <li>Can you open with a hook — a quote, a question, or a bold statement?</li>
+          </ul></td>
+          <td><span class="response-tag">3–4 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Setting &amp; Atmosphere</td>
+          <td class="prompt-text">Time, place, effect on plot</td>
+          <td><ul class="question-list">
+            <li>How does the setting influence the characters' choices?</li>
+            <li>Would the story work in a different time or place?</li>
+            <li>What words does the author use to create atmosphere?</li>
+          </ul></td>
+          <td><span class="response-tag">2–3 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Character Analysis</td>
+          <td class="prompt-text">Traits, motivations, development, relationships</td>
+          <td><ul class="question-list">
+            <li>What drives the main character's actions?</li>
+            <li>How are they different at the end vs. the beginning?</li>
+            <li>What internal conflicts do they face?</li>
+            <li>How do relationships between characters create tension or support?</li>
+          </ul></td>
+          <td><span class="response-tag">4–5 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Plot Summary</td>
+          <td class="prompt-text">Full story structure (spoiler-free)</td>
+          <td><ul class="question-list">
+            <li>What is the inciting incident?</li>
+            <li>How does tension build?</li>
+            <li>What is the climax?</li>
+            <li>How are loose ends tied up?</li>
+            <li>Can you summarize without spoiling the ending?</li>
+          </ul></td>
+          <td><span class="response-tag">5–6 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Theme &amp; Author's Purpose</td>
+          <td class="prompt-text">Central theme + why the author wrote it</td>
+          <td><ul class="question-list">
+            <li>What big idea does the story explore (friendship, justice, identity)?</li>
+            <li>Why did the author choose this topic?</li>
+            <li>Is the theme stated directly or implied?</li>
+            <li>How does the title connect to the theme?</li>
+          </ul></td>
+          <td><span class="response-tag">2–3 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Literary Elements</td>
+          <td class="prompt-text">Figurative language, foreshadowing, symbolism, POV</td>
+          <td><ul class="question-list">
+            <li>Did the author use metaphors, similes, or personification?</li>
+            <li>Are there clues early in the story that hint at later events?</li>
+            <li>Does any object or event represent something deeper?</li>
+            <li>Is the story told in first or third person — and why does that matter?</li>
+          </ul></td>
+          <td><span class="response-tag">2–3 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Critical Opinion</td>
+          <td class="prompt-text">Strengths, weaknesses, text evidence</td>
+          <td><ul class="question-list">
+            <li>What did the author do best — plot, characters, or language?</li>
+            <li>What felt weak or confusing?</li>
+            <li>Can you quote or reference a specific passage to support your opinion?</li>
+            <li>Is the ending satisfying? Why or why not?</li>
+          </ul></td>
+          <td><span class="response-tag">3–4 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Comparison</td>
+          <td class="prompt-text">Compare to another book</td>
+          <td><ul class="question-list">
+            <li>Have you read another book by the same author — how do they compare?</li>
+            <li>Does this book remind you of another in the same genre?</li>
+            <li>What makes this one stand out or fall short?</li>
+          </ul></td>
+          <td><span class="response-tag">2 sentences</span></td>
+        </tr>
+        <tr>
+          <td>Recommendation &amp; Rating</td>
+          <td class="prompt-text">Target audience + 1–5 stars + justification</td>
+          <td><ul class="question-list">
+            <li>Who is the ideal reader for this book?</li>
+            <li>What reading level is it best for?</li>
+            <li>Can you give one strong reason for your star rating?</li>
+            <li>Would you read a sequel?</li>
+          </ul></td>
+          <td><span class="response-tag">2–3 sentences</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- COMPARISON -->
+  <div id="compare" class="tab-panel">
+    <div class="grade-title">Quick Comparison Across Grades</div>
+    <table class="review-table compare-table">
+      <thead><tr>
+        <th class="th-compare">Skill</th>
+        <th class="th-compare">G1–2</th>
+        <th class="th-compare">G3</th>
+        <th class="th-compare">G4</th>
+        <th class="th-compare">G5</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>Length</td>
+          <td>5–7 sentences</td>
+          <td>10–15 sentences</td>
+          <td>1 page</td>
+          <td>1–1.5 pages</td>
+        </tr>
+        <tr>
+          <td>Summary Style</td>
+          <td>"It's about…"</td>
+          <td>B-M-E</td>
+          <td>Plot arc (no spoilers)</td>
+          <td>Full story structure</td>
+        </tr>
+        <tr>
+          <td>Character Depth</td>
+          <td>Name only</td>
+          <td>Traits</td>
+          <td>Traits + growth</td>
+          <td>Analysis + motivation</td>
+        </tr>
+        <tr>
+          <td>Opinion Type</td>
+          <td>Like / don't like</td>
+          <td>With 1 reason</td>
+          <td>With life connection</td>
+          <td>With text evidence</td>
+        </tr>
+        <tr>
+          <td>Theme</td>
+          <td>—</td>
+          <td>Simple lesson</td>
+          <td>Author's message</td>
+          <td>Theme + author's purpose</td>
+        </tr>
+        <tr>
+          <td>Literary Elements</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>Figurative language, POV, symbolism</td>
+        </tr>
+        <tr>
+          <td>Question Complexity</td>
+          <td>What? Who?</td>
+          <td>How? Why? (simple)</td>
+          <td>How? Why? (analytical)</td>
+          <td>Why? What if? (critical)</td>
+        </tr>
+        <tr>
+          <td>Comparison</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>Cross-text comparison</td>
+        </tr>
+        <tr>
+          <td>Vocabulary Focus</td>
+          <td>Sight words</td>
+          <td>Adjectives</td>
+          <td>Transition words</td>
+          <td>Academic language</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="footer-note">
+      <strong>Progression Summary:</strong><br>
+      G1–2: <strong>Literal recall</strong> (What? Who?) &rarr;
+      G3: <strong>Inferential thinking</strong> (How? Why?) &rarr;
+      G4: <strong>Analytical response</strong> (How? Why? + connections) &rarr;
+      G5: <strong>Critical evaluation</strong> (Why does it matter? What evidence supports your view?)
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showTab(id, btn, activeClass) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.className = 'tab-btn';
+    });
+    document.getElementById(id).classList.add('active');
+    btn.classList.add(activeClass);
+  }
+</script>
+
+</body>
+</html>
